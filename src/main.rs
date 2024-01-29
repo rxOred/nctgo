@@ -43,7 +43,7 @@ struct Bot;
 impl EventHandler for Bot {
     async fn message(&self, ctx: Context, msg: Message) {
         if msg.content == "!hello" {
-            if let Err(e) = msg.channel_id.say(&ctx.http, "world!").await {
+            if let Err(e) = msg.channel_id.say(&ctx.http, "Hello ill get u markleee").await {
                 error!("Error sending message: {:?}", e);
             }
         } else if msg.content == "!secret" {
