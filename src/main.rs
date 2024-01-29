@@ -1,3 +1,5 @@
+use std::string;
+
 use reqwest::Error;
 use serenity::async_trait;
 use serenity::model::channel::Message;
@@ -8,7 +10,7 @@ use tracing::{error, info};
 
 use scraper::{Html, Selector};
 
-async fn allkpop() -> Result<Vec<String>, Error> {
+async fn allkpop() -> Result<Vec<String>, Error> { 
     let resp = match reqwest::get("https://www.allkpop.com/?view=a&feed=a&sort=d").await {
         Ok(res) => res,
         Err(e) => {
@@ -22,11 +24,12 @@ async fn allkpop() -> Result<Vec<String>, Error> {
     let article_selector = Selector::parse("article.list").unwrap();
 
     let mut list: Vec<String> = Vec::new();
-    for each in document.select(&article_selector) {
+    for each in document.select(&article_selector).take(10) {
         let a_selector = Selector::parse(r#"div.content>div>div.text>div.title>a"#).unwrap();
         for a_elem in each.select(&a_selector) {
+            let mut url = "https://www.allkpop.com".to_owned();
             let href = a_elem.value().attr("href").expect("href not found");
-            println!("Here printing {}", href.to_string().as_str());
+            url.push_str(href); 
             list.push(href.to_string());
         }
     }
