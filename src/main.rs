@@ -8,8 +8,27 @@ use shuttle_secrets::SecretStore;
 use tracing::{error, info};
 
 use scraper::{Html, Selector};
+use twitter_v2::authorization::BearerToken;
+use twitter_v2::TwitterApi;
 
-async fn marklee_twitter_summer_youth() {}
+/*
+ * get most recent tweet
+ *
+ */
+async fn marklee_twitter_summer_youth() {
+    let mut list: Vec<String> = Vec::new();
+
+    let auth = BearerToken::new(std::env::var("TWITTER_TOKEN").unwrap());
+    /*let tweet = TwitterApi::new(auth)
+    .get_user(id)
+    .get_user_tweets(user_id)
+    .unwrap();
+    */
+}
+
+async fn soompi() -> Result<Vec<String>, Error> {}
+
+async fn koreaboo() -> Result<Vec<String>, Error> {}
 
 async fn allkpop() -> Result<Vec<String>, Error> {
     let resp = match reqwest::get("https://www.allkpop.com/?view=a&feed=a&sort=d").await {
@@ -50,27 +69,6 @@ impl EventHandler for Bot {
             {
                 error!("Error sending message: {:?}", e);
             }
-        } else if msg.content == "!say it" {
-            match tokio::fs::File::open("say_sorry.jpg").await {
-                Ok(f) => {
-                    match CreateAttachment::file(&f, "say_sorry.jpg").await {
-                        Ok(file) => {
-                            let response = CreateMessage::new()
-                                .content("Ever since the first day of meeting u, u brought me happiness but i only paid back to u with pressure and questions u could not answer.I tried to attribute this to the situation but now come to think of it, it is not entirely that. It has a lot to do with me. I tried to deal with the situation the best way i could when we first started facing it and i did to some extend. But at one point my emotions, feelings for u and insecurities I had got the best of me. So i couldn't see things clearly and could not understood somethings. We both lacked communication and i assumed a lot of things and didn't trust in you. So i myself take responsibility for the damage I caused to u and myself by ruining the chance to have a healthy relationship with u. For one last time I ask for your forgiveness. I am very sorry for my behaviour towards u and ur feelings.")
-                                .add_file(file);
-                            if let Err(e) = msg.channel_id.send_message(&ctx.http, response).await {
-                                error!("Error sending message {:?}", e);
-                            }
-                        }
-                        Err(e) => {
-                            error!("Error sending message {:?}", e);
-                        }
-                    };
-                }
-                Err(e) => {
-                    error!("Error sending message {:?}", e);
-                }
-            };
         } else if msg.content == "!allkpop" {
             let result = allkpop().await;
             match result {
